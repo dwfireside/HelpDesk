@@ -1,0 +1,74 @@
+﻿@page "/"
+
+@using BlazorApp1.Data
+
+@inject AppState AppState
+
+
+<div class="col tab-content pt-3">
+    <div class="tab-pane fade show active" id="tickets">
+        <div class="row">
+            @foreach (var request in Requests)
+            {
+                <IssueCard Request=request />
+            }
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="kbase">
+        <h3>
+            Knowledge base
+        </h3>
+    </div>
+
+    <div class="tab-pane fade" id="reports">
+        <h3>
+            Reports
+        </h3>
+    </div>
+</div>
+
+<InfoPanel />
+
+
+@code {
+
+    IEnumerable<RequestEx> Requests = new RequestList();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.OnViewModeChanged += OnViewModeChanged;
+        AppState.Requests = await AppState.GetRequests(AppState.SearchText);
+
+        UpdateView();
+    }
+
+    private void UpdateView()
+    {
+        switch (AppState.ViewMode)
+        {
+            case TicketViewMode.Open:
+                {
+                    Requests = AppState.Requests.Where(r => r.IsResolved == false);
+                    break;
+                }
+            case TicketViewMode.Closed:
+                {
+                    Requests = AppState.Requests.Where(r => r.IsResolved == true);
+                    break;
+                }
+            default:
+                {
+                    Requests = AppState.Requests;
+                    break;
+                }
+        }
+    }
+
+    private void OnViewModeChanged()
+    {
+        UpdateView();
+        InvokeAsync(base.StateHasChanged);
+    }
+}

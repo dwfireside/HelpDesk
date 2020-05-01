@@ -1,0 +1,127 @@
+﻿@using BlazorApp1.Data
+
+@inject AppState AppState
+@inject BlazorApp1.Data.RequestService RequestService
+
+
+<div class="modal fade" id="infoPanel" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-slideout right modal-sm" role="document">
+        <div class="modal-content small">
+            <div class="modal-header text-light bg-secondary rounded-0">
+                <h6 class="modal-title">
+                    @Request?.EventName
+                </h6>
+                <button type="button" class="close" id="infoPanel-CloseBtn" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-body">
+                <h>
+                    @Request?.Description
+                    <p class="text-right text-muted text-info">@Request?.CreatedOn.PrettyDate()</p>
+                </h>
+                <hr />
+                @*<input type="text" value="" data-role="tagsinput" placeholder="Add tags" />*@
+
+                @if (Responses != null)
+                {
+                    @foreach (var rm in Responses)
+                    {
+                        <div>
+                            <p class="mb-0">@rm.UserName</p>
+                            <span class="text-muted">Commented @rm.CreatedDate.PrettyDate()</span>
+                            <p class="mt-2">@rm.Description</p>
+                            <hr />
+                        </div>
+                    }
+                }
+
+                @if (EditorVisible)
+                {
+                    <div class="form-group">
+                        <div class="d-flex justify-content-between text-center mt-0 mb-2">
+                            <p class="m-1">New Message</p>
+                            <button type="button" class="close" @onclick="() => EditorVisible = !EditorVisible">&times;</button>
+                        </div>
+
+                        <textarea class="form-control" id="responseMessageTextEditor" rows="3" @bind="ResponseMessage"></textarea>
+
+                        <div class="mt-3 align-content-end">
+                            <button class="btn btn-success btn-sm" @onclick="() => AddNewReponseMessage(false)">Update Ticket</button>
+                            <button class="btn btn-outline-danger btn-sm" @onclick="() => AddNewReponseMessage(true)">Update + Close</button>
+                            <hr class="mt-3" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <i class="far fa-comment-alt icon-comment"></i>@Responses?.Count()
+                            </div>
+                            <i class='fas fa-pencil-alt mt-1 @((true == Request?.IsResolved)? "d-none" : "" )' @onclick="() => EditorVisible = !EditorVisible"></i>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class='modal-footer rounded-0 text-light bg-danger @((false == Request?.IsResolved)? "d-none" : "" )'>
+                <div class="container text-left">
+                    <i class="far fa-stop-circle i-lg"></i>
+                    <span>Darren Williams closed this on @Request?.EditedOn.ToString("dd MMM yyyy") </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+
+    RequestEx Request;
+    bool EditorVisible { get; set; }
+    IEnumerable<ResponseMessage> Responses { get; set; }
+    string ResponseMessage = string.Empty;
+
+
+    protected override void OnInitialized()
+    {
+        AppState.OnSelectedRequestChanged += OnRequestChanged;
+    }
+
+    public void AddNewReponseMessage(bool closeTicket)
+    {
+        if (!string.IsNullOrEmpty(this.ResponseMessage))
+        {
+            var ResponseMessage = new ResponseMessage()
+            {
+                RequestId = this.Request.RequestID,
+                Description = this.ResponseMessage,
+                CreatedDate = DateTime.Now,
+                UserName = "Darren Williams"
+            };
+
+            RequestService.AddReponse(ResponseMessage);
+            ((List<ResponseMessage>)this.Responses).Add(ResponseMessage);
+        }
+
+        if (closeTicket)
+            RequestService.CloseRequest(this.Request);
+
+        this.ResponseMessage = string.Empty;
+        EditorVisible = false;
+    }
+
+    private void OnRequestChanged()
+    {
+        Request = AppState.SelectedRequest;
+        if (Request == null) return;
+
+        Responses = RequestService.GetResponsesAsync(Request.RequestID).Result;
+        InvokeAsync(base.StateHasChanged);
+    }
+}
+
