@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,9 +12,24 @@ namespace BlazorApp1.Data
 {
     public class RequestService
     {
+        private readonly IConfiguration _config;
+
+
+        public RequestService(IConfiguration config)
+        {
+            _config = config;
+        }
+
+        public string SqlConnectionString { 
+            get { 
+                return _config.GetConnectionString("DefaultConnection");  
+            } 
+        }
+
+
         public Task<RequestList> GetRequestsAsync()
         {
-            using (var connection = new SqlConnection("Data Source=(local)\\SQLExpress2016;Initial Catalog=Page;User ID=sa;Password=pallmall"))
+            using (var connection = new SqlConnection(SqlConnectionString))
             {
                 return Task.FromResult(GetRequests());
             }
@@ -21,7 +37,7 @@ namespace BlazorApp1.Data
 
         public RequestList GetRequests()
         {
-            using (var connection = new SqlConnection("Data Source=(local)\\SQLExpress2016;Initial Catalog=Page;User ID=sa;Password=pallmall"))
+            using (var connection = new SqlConnection(SqlConnectionString))
             {
                 connection.Open();
 
@@ -37,7 +53,7 @@ namespace BlazorApp1.Data
 
         public Task<IEnumerable<ResponseMessage>> GetResponsesAsync(int requestID)
         {
-            using (var connection = new SqlConnection("Data Source=(local)\\SQLExpress2016;Initial Catalog=Page;User ID=sa;Password=pallmall"))
+            using (var connection = new SqlConnection(SqlConnectionString))
             {
                 connection.Open();
 
@@ -51,7 +67,7 @@ namespace BlazorApp1.Data
 
         public void AddReponse(ResponseMessage message)
         {
-            using (var connection = new SqlConnection("Data Source=(local)\\SQLExpress2016;Initial Catalog=Page;User ID=sa;Password=pallmall"))
+            using (var connection = new SqlConnection(SqlConnectionString))
             {
                 connection.Open();
 
@@ -72,7 +88,7 @@ namespace BlazorApp1.Data
             var sql = "UPDATE Request Set ResolvedIssue=1, EditedOn=@editDate WHERE RequestID=@requestID";
             var param = new { editDate = DateTime.UtcNow, request.RequestID };
 
-            using (var connection = new SqlConnection("Data Source=(local)\\SQLExpress2016;Initial Catalog=Page;User ID=sa;Password=pallmall"))
+            using (var connection = new SqlConnection(SqlConnectionString))
             {
                 connection.Open();
                 connection.Execute(sql, param);

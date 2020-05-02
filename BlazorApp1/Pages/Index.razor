@@ -6,6 +6,7 @@
 
 
 @inject AppState AppState
+@inject BlazorApp1.Data.RequestService RequestService
 
 
 <div class="col tab-content pt-3">
@@ -42,13 +43,14 @@
     protected override async Task OnInitializedAsync()
     {
         AppState.OnViewModeChanged += OnViewModeChanged;
-        AppState.Requests = await AppState.GetRequests(AppState.SearchText);
-
-        UpdateView();
+        await UpdateView();
     }
 
-    private void UpdateView()
+    private async Task UpdateView()
     {
+        var r = await RequestService.GetRequestsAsync();
+        AppState.Requests = r.Filter(AppState.SearchText);
+
         switch (AppState.ViewMode)
         {
             case TicketViewMode.Open:
@@ -71,7 +73,7 @@
 
     private void OnViewModeChanged()
     {
-        UpdateView();
+        InvokeAsync(UpdateView);
         InvokeAsync(base.StateHasChanged);
     }
 

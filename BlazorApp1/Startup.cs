@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BlazorApp1.Data;
+using BlazorApp1.Shared;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using BlazorApp1.Data;
-using BlazorApp1.Shared;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace BlazorApp1
 {
@@ -29,6 +25,11 @@ namespace BlazorApp1
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+
+            services.AddDbContext<Data.AppContext>(options =>
+                          options.UseSqlServer(
+                              Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddSingleton<RequestService>();
             services.AddSingleton<AppState>();
         }
