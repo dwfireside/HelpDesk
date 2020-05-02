@@ -21,17 +21,17 @@
     <div class="row h-100">
         <div class="sidebar bg-secondary d-none d-md-block">
             <nav class="nav flex-column" id="nav-menu">
-                <a class='nav-item nav-link @CssClass(TicketViewMode.Open)'  href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.Open)">
+                <a class="@CssClass(TicketViewMode.Open)"  href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.Open)">
                     <i class="fas fa-envelope mr-2"></i>Open <span class="badge badge-pill badge-info ml-1">@GetViewCount(TicketViewMode.Open)</span>
                 </a>
-                <a class='nav-item nav-link @((AppState.ViewMode==TicketViewMode.Closed) ? "active" : "")'  href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.Closed)">
+                <a class="@CssClass(TicketViewMode.Closed)"  href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.Closed)">
                     <i class="fas fa-folder mr-2"></i>Closed <span class="badge badge-pill badge-info ml-1">@GetViewCount(TicketViewMode.Closed)</span>
                 </a>
-                <a class='nav-item nav-link @CssClass(TicketViewMode.All)'  href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.All)">
+                <a class="@CssClass(TicketViewMode.All)"  href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.All)">
                     <i class="fas fa-newspaper mr-2"></i>All <span class="badge badge-pill badge-info ml-1">@GetViewCount(TicketViewMode.All)</span>
                 </a>
                 <hr class="bg-light" /> 
-                <a class='nav-item nav-link @CssClass(TicketViewMode.Archived)'  href="#archived" @onclick="@(e => AppState.ViewMode=TicketViewMode.Archived)">
+                <a class="@CssClass(TicketViewMode.Archived)"  href="#archived" @onclick="@(e => AppState.ViewMode=TicketViewMode.Archived)">
                     <i class="fas fa-archive mr-2"></i>Archived
                 </a>
             </nav>
@@ -62,6 +62,9 @@
     string CssClass(TicketViewMode view)
     {
         var cssClass = new List<string>();
+
+        cssClass.Add("nav-item");
+        cssClass.Add("nav-link");
 
         if (AppState.ViewMode == view)
             cssClass.Add("active");
