@@ -4,6 +4,7 @@
 
 @inject AppState AppState
 @inject BlazorApp1.Data.RequestService RequestService
+@inject IJSRuntime js
 
 
 <div class="modal fade" id="infoPanel" tabindex="-1" role="dialog">
@@ -80,7 +81,6 @@
 </div>
 
 
-
 @code {
 
     RequestEx Request;
@@ -94,7 +94,16 @@
         AppState.OnSelectedRequestChanged += OnRequestChanged;
     }
 
-    public void AddNewReponseMessage(bool closeTicket)
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (EditorVisible)
+            js.InvokeVoidAsync("jsfunction.focusElement", "responseMessageTextEditor");
+        else
+            base.OnAfterRender(firstRender);
+    }
+
+
+    private void AddNewReponseMessage(bool closeTicket)
     {
         if (!string.IsNullOrEmpty(this.ResponseMessage))
         {

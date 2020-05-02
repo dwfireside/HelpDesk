@@ -27,7 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\bootstrap-tagsinput.js" />
+    <None Include="wwwroot\js\bootstrap-tagsinput.js" />
+    <None Include="wwwroot\js\window.js" />
   </ItemGroup>
 
 </Project>
