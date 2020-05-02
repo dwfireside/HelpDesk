@@ -2,6 +2,9 @@
 
 @using BlazorApp1.Data
 
+@implements IDisposable
+
+
 @inject AppState AppState
 
 
@@ -70,5 +73,10 @@
     {
         UpdateView();
         InvokeAsync(base.StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        AppState.OnViewModeChanged -= OnViewModeChanged;
     }
 }
