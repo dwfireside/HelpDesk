@@ -91,7 +91,12 @@
 
     protected override void OnInitialized()
     {
-        AppState.OnSelectedRequestChanged += OnRequestChanged;
+        AppState.OnSelectedRequestChanged += SelectedRequestChanged;
+    }
+
+    public void Dispose()
+    {
+        AppState.OnSelectedRequestChanged -= SelectedRequestChanged;
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -117,6 +122,8 @@
 
             RequestService.AddReponse(ResponseMessage);
             ((List<ResponseMessage>)this.Responses).Add(ResponseMessage);
+
+            Request.NotificationCount += 1;
         }
 
         if (closeTicket)
@@ -124,20 +131,17 @@
 
         this.ResponseMessage = string.Empty;
         EditorVisible = false;
+
+        AppState.OnUpdateState();
     }
 
-    private void OnRequestChanged()
+    private void SelectedRequestChanged()
     {
         Request = AppState.SelectedRequest;
         if (Request == null) return;
 
         Responses = RequestService.GetResponsesAsync(Request.RequestID).Result;
         InvokeAsync(base.StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        AppState.OnSelectedRequestChanged -= OnRequestChanged;
     }
 }
 

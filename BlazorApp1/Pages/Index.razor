@@ -39,11 +39,15 @@
 
     IEnumerable<RequestEx> Requests = new RequestList();
 
-
     protected override async Task OnInitializedAsync()
     {
         AppState.OnViewModeChanged += OnViewModeChanged;
         await UpdateView();
+    }
+
+    public void Dispose()
+    {
+        AppState.OnViewModeChanged -= OnViewModeChanged;
     }
 
     private async Task UpdateView()
@@ -75,10 +79,5 @@
     {
         InvokeAsync(UpdateView);
         InvokeAsync(base.StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        AppState.OnViewModeChanged -= OnViewModeChanged;
     }
 }

@@ -4,9 +4,9 @@
 
 <div class="col-12 col-md-6 col-lg-4 col-xl-2">
     <div class="shadow">
-        <div class="card d-flex h-200 small mb-1 mb-md-3 @(Request.IsResolved ? "closed" : "new")" tabindex="700">
+        <div class='card d-flex h-200 small mb-1 mb-md-3 @(Request.IsResolved ? "closed" : "new")' tabindex="700">
             <div class="card-body px-2 py-1 text-color-info">
-                <a class="stretched-link" href="" data-toggle="modal" data-target="#infoPanel" @onclick="SetAppState"></a>
+                <a class="stretched-link" href="" data-toggle="modal" data-target="#infoPanel" @onclick="SetActiveRequest"></a>
                 <p class="card-body-text text-primary text-wrap text-truncate d-block">@Request.Description</p>
 
                 <div class="panel-footer d-flex justify-content-between text-muted small mt-2">
@@ -14,7 +14,6 @@
                     {
                         <i class="far fa-comment-alt icon-comment"></i>@Request.NotificationCount
                     }
-
                     <span class="ml-auto">@Request.CreatedOn.PrettyDate()</span>
                 </div>
             </div>
@@ -24,11 +23,15 @@
 
 
 @code {
-    [Parameter]
-    public RequestEx Request { get; set; }
+   
+    [Parameter] public RequestEx Request { get; set; }
 
-    public void SetAppState()
+    public void SetActiveRequest()
     {
         AppState.SelectedRequest = this.Request;
+        AppState.UpdateState += UpdateStateHandler;
     }
+
+    void UpdateStateHandler() => InvokeAsync(StateHasChanged);
 }
+

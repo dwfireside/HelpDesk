@@ -19,7 +19,8 @@ namespace BlazorApp1.Shared
         public event Action OnSelectedRequestChanged;
         public event Action OnViewModeChanged;
         public event Action OnSearchTextChanged;
-       
+        public event Action UpdateState;
+
         public RequestList Requests = new RequestList();
         
         private RequestEx _selectedRequest;
@@ -52,5 +53,8 @@ namespace BlazorApp1.Shared
                 OnViewModeChanged?.Invoke();
             }
         }
+
+        public void OnUpdateState () => UpdateState.Invoke();
+        
     }
 }
