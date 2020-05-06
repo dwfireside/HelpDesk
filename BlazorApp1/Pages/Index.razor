@@ -7,6 +7,8 @@
 
 @inject AppState AppState
 @inject BlazorApp1.Data.RequestService RequestService
+@inject HelpDeskServer.Services.BlazorTimer Timer
+@inject IJSRuntime js
 
 
 <div class="col tab-content pt-3">
@@ -41,13 +43,18 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Timer.SetTimer(5000);
+        Timer.OnElapsed += TimerElaspsedHandler;
+
         AppState.OnViewModeChanged += OnViewModeChanged;
+
         await UpdateView();
     }
 
     public void Dispose()
     {
         AppState.OnViewModeChanged -= OnViewModeChanged;
+        Timer.OnElapsed -= TimerElaspsedHandler;
     }
 
     private async Task UpdateView()
@@ -80,4 +87,15 @@
         InvokeAsync(UpdateView);
         InvokeAsync(base.StateHasChanged);
     }
+
+    private void TimerElaspsedHandler()
+    {
+        int openCount = AppState.Requests.Count();
+        OnViewModeChanged();
+
+        if (AppState.Requests.Count() > openCount)
+            js.InvokeVoidAsync("playSound", "media/ding.wav");
+    }
 }
+
+

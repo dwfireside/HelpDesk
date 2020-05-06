@@ -2,10 +2,8 @@
 using Dapper.Contrib.Extensions;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BlazorApp1.Data
@@ -25,7 +23,6 @@ namespace BlazorApp1.Data
                 return _config.GetConnectionString("DefaultConnection");  
             } 
         }
-
 
         public Task<RequestList> GetRequestsAsync()
         {

@@ -19,7 +19,6 @@ namespace HelpDeskServer.Services
         private void NotifyTimerElapsed(Object source, ElapsedEventArgs e)
         {
             OnElapsed?.Invoke();
-            _timer.Dispose();
         }
     }
 }
