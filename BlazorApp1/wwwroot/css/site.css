@@ -77,27 +77,26 @@ body {
 }
 
 
+
 .avatar-circle {
-    width: 100px;
-    height: 100px;
+    --avatar-size: 40px;
+
+    width: var(--avatar-size);
+    height: var(--avatar-size);
+    min-width: var(--avatar-size);
     background-color: lightblue;
     text-align: center;
     border-radius: 50%;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
-  }
-  
-  
-  .initials {
+}
+
+.initials {
     position: relative;
-    top: 25px;
-    /* 25% of parent */
-    font-size: 50px;
-    /* 50% of parent */
-    line-height: 50px;
-    /* 50% of parent */
+    top: calc(var(--avatar-size) * 0.25);
+    font-size: calc(var(--avatar-size) * 0.5);
+    line-height: calc(var(--avatar-size) * 0.5);
     color: #fff;
     font-family: "Courier New", monospace;
     font-weight: bold;
-  }
-  
+}
