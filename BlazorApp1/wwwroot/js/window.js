@@ -1,1 +1,17 @@
-﻿window.jsfunction = { focusElement: function (id) { const element = document.getElementById(id); element.focus(); } }
+﻿window.focusElement = (id) => {
+    var element = document.getElementById(id);
+
+    if (element)
+        element.focus();
+
+};
+
+window.scrollIntoView = (id) => {
+    var element = document.getElementById(id);
+
+    if (element)
+        element.scrollIntoView();
+
+};
+
+
