@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
-namespace BlazorApp1.Data
+namespace HelpDeskServer.Data
 {
     public class RequestService
     {

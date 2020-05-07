@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 
-namespace BlazorApp1.Data
+namespace HelpDeskServer.Data
 {
     public class RequestList : List<RequestEx>
     {

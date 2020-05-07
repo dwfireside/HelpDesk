@@ -1,12 +1,11 @@
-using BlazorApp1.Data;
-using BlazorApp1.Shared;
+using HelpDeskServer.Data;
+using HelpDeskServer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-using HelpDeskServer.Services;
 
 namespace BlazorApp1
 {
@@ -26,12 +25,12 @@ namespace BlazorApp1
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            services.AddDbContext<Data.AppContext>(options =>
+            services.AddDbContext<AppContext>(options =>
                           options.UseSqlServer(
                               Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddSingleton<RequestService>();
-            services.AddSingleton<AppState>();
+            services.AddScoped<AppState>();
             services.AddTransient<BlazorTimer>();
 ;        }
 

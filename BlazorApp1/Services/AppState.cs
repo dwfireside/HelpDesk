@@ -1,9 +1,9 @@
-﻿using BlazorApp1.Data;
+﻿using HelpDeskServer.Data;
 using System;
 using System.Collections.Generic;
 
 
-namespace BlazorApp1.Shared
+namespace HelpDeskServer.Services
 {
     public enum TicketViewMode
     {
