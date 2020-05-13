@@ -30,7 +30,7 @@ namespace BlazorApp1
                               Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddSingleton<RequestService>();
-            services.AddScoped<AppState>();
+            services.AddSingleton<AppState>();
             services.AddTransient<BlazorTimer>();
 ;        }
 
