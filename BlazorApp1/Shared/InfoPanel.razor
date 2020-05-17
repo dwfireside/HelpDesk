@@ -4,7 +4,6 @@
 @implements IDisposable
 
 @inject AppState AppState
-@inject HelpDeskServer.Data.RequestService RequestService
 @inject IJSRuntime js
 
 
@@ -131,14 +130,14 @@
                 UserName = "Darren Williams"
             };
 
-            RequestService.AddReponse(ResponseMessage);
+            //RequestService.AddReponse(ResponseMessage);
             ((List<ResponseMessage>)this.Responses).Add(ResponseMessage);
 
             Request.NotificationCount += 1;
         }
 
         if (closeTicket)
-            RequestService.CloseRequest(this.Request);
+            //RequestService.CloseRequest(this.Request);
 
         this.ResponseMessage = string.Empty;
         EditorVisible = false;
@@ -151,7 +150,7 @@
         Request = AppState.SelectedRequest;
         if (Request == null) return;
 
-        Responses = RequestService.GetResponsesAsync(Request.RequestID).Result;
+        //Responses = RequestService.GetResponsesAsync(Request.RequestID).Result;
         InvokeAsync(base.StateHasChanged);
     }
 
