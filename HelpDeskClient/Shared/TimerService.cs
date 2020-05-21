@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Timers;
 
-namespace HelpDeskServer.Services
+namespace HelpDesk.Shared.System
 {
     public class BlazorTimer
     {

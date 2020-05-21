@@ -3,61 +3,60 @@
 
 @using HelpDesk.Shared.Data
 @using HelpDesk.Shared.System
-@using HelpDeskServer.Server.Services
-@using HelpDeskServer.Server.Shared
+
 
 
 @inject AppState AppState
-@inject RequestService RequestService
+@inject HttpClient http
 @inject BlazorTimer UpdateTimer
 @inject IJSRuntime js
 
-    <div class="container-fluid h-100">
-        <div class="row h-100">
-            <div class="sidebar bg-secondary d-none d-md-block">
-                <nav class="nav flex-column" id="nav-menu">
-                    <a class="@CssClass(TicketViewMode.Open)" href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.Open)">
-                        <i class="fas fa-envelope mr-2"></i>Open <span class="badge badge-pill badge-info ml-1">@GetViewCount(TicketViewMode.Open)</span>
-                    </a>
-                    <a class="@CssClass(TicketViewMode.Closed)" href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.Closed)">
-                        <i class="fas fa-folder mr-2"></i>Closed <span class="badge badge-pill badge-info ml-1">@GetViewCount(TicketViewMode.Closed)</span>
-                    </a>
-                    <a class="@CssClass(TicketViewMode.All)" href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.All)">
-                        <i class="fas fa-newspaper mr-2"></i>All <span class="badge badge-pill badge-info ml-1">@GetViewCount(TicketViewMode.All)</span>
-                    </a>
-                    <hr class="bg-light" />
-                    <a class="@CssClass(TicketViewMode.Archived)" href="#archived" @onclick="@(e => AppState.ViewMode=TicketViewMode.Archived)">
-                        <i class="fas fa-archive mr-2"></i>Archived
-                    </a>
-                </nav>
-            </div>
-
-            <div class="col tab-content pt-3">
-                <div class="tab-pane fade show active" id="tickets">
-                    <div class="row">
-                        @foreach (var request in Requests)
-                        {
-                            <IssueCard Request=request />
-                        }
-                    </div>
-                </div>
-
-                <div class="tab-pane fade" id="kbase">
-                    <h3>
-                        Knowledge base
-                    </h3>
-                </div>
-
-                <div class="tab-pane fade" id="reports">
-                    <h3>
-                        Reports
-                    </h3>
-                </div>
-            </div>
-
-            <InfoPanel />
+<div class="container-fluid h-100">
+    <div class="row h-100">
+        <div class="sidebar bg-secondary d-none d-md-block">
+            <nav class="nav flex-column" id="nav-menu">
+                <a class="@CssClass(TicketViewMode.Open)" href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.Open)">
+                    <i class="fas fa-envelope mr-2"></i>Open <span class="badge badge-pill badge-info ml-1">@GetViewCount(TicketViewMode.Open)</span>
+                </a>
+                <a class="@CssClass(TicketViewMode.Closed)" href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.Closed)">
+                    <i class="fas fa-folder mr-2"></i>Closed <span class="badge badge-pill badge-info ml-1">@GetViewCount(TicketViewMode.Closed)</span>
+                </a>
+                <a class="@CssClass(TicketViewMode.All)" href="javascript: void(0)" @onclick="@(e => AppState.ViewMode=TicketViewMode.All)">
+                    <i class="fas fa-newspaper mr-2"></i>All <span class="badge badge-pill badge-info ml-1">@GetViewCount(TicketViewMode.All)</span>
+                </a>
+                <hr class="bg-light" />
+                <a class="@CssClass(TicketViewMode.Archived)" href="#archived" @onclick="@(e => AppState.ViewMode=TicketViewMode.Archived)">
+                    <i class="fas fa-archive mr-2"></i>Archived
+                </a>
+            </nav>
         </div>
+
+        <div class="col tab-content pt-3">
+            <div class="tab-pane fade show active" id="tickets">
+                <div class="row">
+                    @foreach (var request in Requests)
+                    {
+                        <IssueCard Request=request />
+                    }
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="kbase">
+                <h3>
+                    Knowledge base
+                </h3>
+            </div>
+
+            <div class="tab-pane fade" id="reports">
+                <h3>
+                    Reports
+                </h3>
+            </div>
+        </div>
+
+        <InfoPanel />
     </div>
+</div>
 
 
 @code {
@@ -85,7 +84,7 @@
 
     private async Task UpdateView()
     {
-        var r = await RequestService.GetRequestsAsync();
+        var r = await http.GetFromJsonAsync<RequestList>("Request/GetRequests");
         AppState.Requests = r.Filter(AppState.SearchText);
 
         switch (AppState.ViewMode)

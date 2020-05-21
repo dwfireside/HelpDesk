@@ -1,9 +1,7 @@
-﻿using HelpDeskServer.Data;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using HelpDesk.Shared.Data;
 
-
-namespace HelpDeskServer.Services
+namespace HelpDesk.Shared.System
 {
     public enum TicketViewMode
     {

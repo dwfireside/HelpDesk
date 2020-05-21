@@ -2,8 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>BlazorApp1</AssemblyName>
+    <AssemblyName>HelpDeskServer.Server</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\libs\**" />
+    <Content Remove="wwwroot\libs\**" />
+    <EmbeddedResource Remove="wwwroot\libs\**" />
+    <None Remove="wwwroot\libs\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Data\WeatherForecast.cs" />
@@ -23,12 +30,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\libs\" />
+    <Folder Include="Data\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\js\bootstrap-tagsinput.js" />
     <None Include="wwwroot\js\window.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HelpDeskClient\Shared\HelpDesk.Shared.csproj" />
   </ItemGroup>
 
 </Project>

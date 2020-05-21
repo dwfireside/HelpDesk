@@ -1,19 +1,24 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using HelpDesk.Shared.Data;
+
 
 namespace HelpDeskServer.Data
 {
-    public class RequestService
+    [ApiController]
+    [Route("[controller]")]
+    public class RequestController
     {
         private readonly IConfiguration _config;
 
 
-        public RequestService(IConfiguration config)
+        public RequestController(IConfiguration config)
         {
             _config = config;
         }
@@ -24,14 +29,9 @@ namespace HelpDeskServer.Data
             } 
         }
 
-        public Task<RequestList> GetRequestsAsync()
-        {
-            using (var connection = new SqlConnection(SqlConnectionString))
-            {
-                return Task.FromResult(GetRequests());
-            }
-        }
-
+       
+        [HttpGet]
+        [Route("GetRequests")]
         public RequestList GetRequests()
         {
             using (var connection = new SqlConnection(SqlConnectionString))
@@ -48,7 +48,9 @@ namespace HelpDeskServer.Data
             }
         }
 
-        public Task<IEnumerable<ResponseMessage>> GetResponsesAsync(int requestID)
+        [HttpGet]
+        [Route("GetResponses")]
+        public IEnumerable<ResponseMessage> GetResponses(int requestID)
         {
             using (var connection = new SqlConnection(SqlConnectionString))
             {
@@ -58,7 +60,7 @@ namespace HelpDeskServer.Data
                           "FROM [Notification] n INNER JOIN [Employee] e on n.EditedBy = e.EmployeeIdNumber " +
                           "WHERE n.RequestID = @requestID";
 
-                return Task.FromResult(connection.Query<ResponseMessage>(sql, new { requestID } ));
+                return connection.Query<ResponseMessage>(sql, new { requestID });
             }
         }
 

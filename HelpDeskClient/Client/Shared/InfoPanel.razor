@@ -1,11 +1,10 @@
 ﻿@using HelpDesk.Shared.Data
 @using HelpDesk.Shared.System
-@using HelpDeskServer.Server.Services 
 
 @implements IDisposable
 
 @inject AppState AppState
-@inject RequestService RequestService 
+@inject HttpClient http
 @inject IJSRuntime js
 
 
@@ -131,16 +130,16 @@
                 UserName = "Darren Williams"
             };
 
-            RequestService.AddReponse(ResponseMessage);
+            //RequestService.AddReponse(ResponseMessage);
             ((List<ResponseMessage>)this.Responses).Add(ResponseMessage);
 
             Request.NotificationCount += 1;
         }
 
         if (closeTicket)
-            RequestService.CloseRequest(this.Request);
+            // RequestService.CloseRequest(this.Request);
 
-        this.ResponseMessage = string.Empty;
+            this.ResponseMessage = string.Empty;
         EditorVisible = false;
 
         AppState.OnUpdateState();
@@ -151,7 +150,7 @@
         Request = AppState.SelectedRequest;
         if (Request == null) return;
 
-        Responses = RequestService.GetResponsesAsync(Request.RequestID).Result;
+        Responses = http.GetFromJsonAsync<IEnumerable<ResponseMessage>>("Request/GetResponses").Result;
         InvokeAsync(base.StateHasChanged);
     }
 
