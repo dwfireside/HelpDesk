@@ -101,6 +101,7 @@
         AppState.OnSelectedRequestChanged += SelectedRequestChanged;
     }
 
+
     public void Dispose()
     {
         AppState.OnSelectedRequestChanged -= SelectedRequestChanged;
@@ -148,9 +149,12 @@
     private void SelectedRequestChanged()
     {
         Request = AppState.SelectedRequest;
+
+        Console.WriteLine($"SelectedRequestChanged - {Request.Description}");
+
         if (Request == null) return;
 
-        Responses = http.GetFromJsonAsync<IEnumerable<ResponseMessage>>("Request/GetResponses").Result;
+        //Responses = http.GetFromJsonAsync<IEnumerable<ResponseMessage>>("Request/GetResponses").Result;
         InvokeAsync(base.StateHasChanged);
     }
 
