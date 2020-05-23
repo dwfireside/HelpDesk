@@ -146,13 +146,13 @@
         AppState.OnUpdateState();
     }
 
-    private void SelectedRequestChanged()
+     async void SelectedRequestChanged()
     {
         Request = AppState.SelectedRequest;
         if (Request == null) return;
 
-        Responses = RequestService.GetResponsesAsync(Request.RequestID).Result;
-        InvokeAsync(base.StateHasChanged);
+        Responses = await RequestService.GetResponsesAsync(Request.RequestID);
+        StateHasChanged();
     }
 
     string GetUserNameInitials(string username)

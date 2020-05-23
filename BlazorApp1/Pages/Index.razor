@@ -63,23 +63,31 @@
 @code {
 
     IEnumerable<RequestEx> Requests = new RequestList();
+    bool isRendered;
 
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        AppState.Requests = await RequestService.GetRequestsAsync();
         AppState.OnSearchTextChanged += OnSearchTextChanged;
 
-        UpdateView(TicketViewMode.Open);
+        GetRequestsAsync();
 
         UpdateTimer.SetTimer(5000);
-        UpdateTimer.OnElapsed += TimerElaspsedHandler;
+        UpdateTimer.OnElapsed += GetRequestsAsync;
+
+        return base.OnInitializedAsync();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        isRendered = !firstRender;
+        base.OnAfterRender(firstRender);
     }
 
     public void Dispose()
     {
         AppState.OnSearchTextChanged -= OnSearchTextChanged;
-        UpdateTimer.OnElapsed -= TimerElaspsedHandler;
+        UpdateTimer.OnElapsed -= GetRequestsAsync;
     }
 
     private void UpdateView(TicketViewMode viewMode)
@@ -105,24 +113,27 @@
                     break;
                 }
         }
+
+        InvokeAsync(StateHasChanged);
     }
 
     void OnSearchTextChanged()
     {
         UpdateView(AppState.ViewMode);
-        InvokeAsync(StateHasChanged);
     }
 
-
-    void TimerElaspsedHandler()
+    async void GetRequestsAsync()
     {
         int openCount = AppState.Requests.Count();
-        AppState.Requests = RequestService.GetRequests();
-
-        UpdateView(AppState.ViewMode);
+        AppState.Requests = await RequestService.GetRequestsAsync();
 
         if (AppState.Requests.Count() > openCount)
-            js.InvokeVoidAsync("playSound", "media/ding.wav");
+        {
+            UpdateView(AppState.ViewMode);
+
+            if (isRendered)
+                await js.InvokeVoidAsync("playSound", "media/ding.wav");
+        }
     }
 
     int GetViewCount(TicketViewMode view)

@@ -146,7 +146,7 @@
         AppState.OnUpdateState();
     }
 
-    private void SelectedRequestChanged()
+    private async void SelectedRequestChanged()
     {
         Request = AppState.SelectedRequest;
 
@@ -154,8 +154,10 @@
 
         if (Request == null) return;
 
-        //Responses = http.GetFromJsonAsync<IEnumerable<ResponseMessage>>("Request/GetResponses").Result;
-        InvokeAsync(base.StateHasChanged);
+        var uri = $"Request/GetResponses?RequestID={Request.RequestID}";
+        Responses = await http.GetFromJsonAsync<IEnumerable<ResponseMessage>>(uri);
+
+        StateHasChanged();
     }
 
     string GetUserNameInitials(string username)

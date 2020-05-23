@@ -61,27 +61,35 @@
 @code {
 
     IEnumerable<RequestEx> Requests = new RequestList();
-    
+    bool isRendered;
 
-    protected async override Task OnInitializedAsync()
+
+    protected override Task OnInitializedAsync()
     {
-        AppState.Requests = await http.GetFromJsonAsync<RequestList>("Request/GetRequests");
         AppState.OnSearchTextChanged += OnSearchTextChanged;
 
-        UpdateView(TicketViewMode.Open);
+        GetRequestsAsync();
 
         UpdateTimer.SetTimer(5000);
-        UpdateTimer.OnElapsed += TimerElaspsedHandler;   
+        UpdateTimer.OnElapsed += GetRequestsAsync;
+
+        return base.OnInitializedAsync();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        isRendered = !firstRender;
+        base.OnAfterRender(firstRender);
     }
 
     public void Dispose()
-
     {
         AppState.OnSearchTextChanged -= OnSearchTextChanged;
-        UpdateTimer.OnElapsed -= TimerElaspsedHandler;
+        UpdateTimer.OnElapsed -= GetRequestsAsync;
     }
 
-    private void UpdateView(TicketViewMode viewMode)
+
+    void UpdateView(TicketViewMode viewMode)
     {
         AppState.ViewMode = viewMode;
         var r = AppState.Requests.Filter(AppState.SearchText);
@@ -104,24 +112,27 @@
                     break;
                 }
         }
-    }
 
+        InvokeAsync(StateHasChanged);
+    }
 
     void OnSearchTextChanged()
     {
         UpdateView(AppState.ViewMode);
-        InvokeAsync(StateHasChanged);
     }
 
-    void TimerElaspsedHandler()
+    async void GetRequestsAsync()
     {
         int openCount = AppState.Requests.Count();
-        AppState.Requests = http.GetFromJsonAsync<RequestList>("Request/GetRequests").Result;
-
-        UpdateView(AppState.ViewMode);
+        AppState.Requests = await http.GetFromJsonAsync<RequestList>($"Request/GetRequests");
 
         if (AppState.Requests.Count() > openCount)
-            js.InvokeVoidAsync("playSound", "media/ding.wav");
+        {
+            UpdateView(AppState.ViewMode);
+
+            if (isRendered)
+                await js.InvokeVoidAsync("playSound", "media/ding.wav");
+        }
     }
 
     int GetViewCount(TicketViewMode view)
